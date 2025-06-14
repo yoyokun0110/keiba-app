@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>競馬買い目アプリ</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; }
+    input { width: 60px; margin: 4px; }
+    .horse-row { margin-bottom: 8px; }
+    #results { margin-top: 24px; }
+    .mark { display: inline-block; width: 30px; }
+  </style>
+</head>
+<body>
+  <h2>競馬買い目アプリ（Web版）</h2>
+  <div id="horseInputs"></div>
+  <button onclick="calc()">買い目を出す</button>
+  <div id="results"></div>
+
+  <script>
+    const MAX = 18;
+    const marks = ["◎", "◯", "▲", "△", "★", "注", "×"];
+    const container = document.getElementById("horseInputs");
+    for (let i = 1; i <= MAX; i++) {
+      const div = document.createElement("div");
+      div.className = "horse-row";
+      div.innerHTML = `馬${i}番　人気 <input type="number" id="pop${i}" min="1" max="99" />`;
+      container.appendChild(div);
+    }
+
+    function calc() {
+      const arr = [];
+      for (let i = 1; i <= MAX; i++) {
+        const pop = parseFloat(document.getElementById("pop"+i).value);
+        if (pop) {
+          const score = 100 - pop * 1.2;
+          arr.push({horse: i, score});
+        }
+      }
+      arr.sort((a,b) => b.score - a.score);
+      const results = arr.slice(0,7);
+      const resDiv = document.getElementById("results");
+      resDiv.innerHTML = "<h3>🏇 統合買い目</h3>";
+      results.forEach((r, idx) => {
+        const mark = marks[idx] || "";
+        const p = document.createElement("p");
+        p.innerText = `${mark}：${r.horse}番（${r.score.toFixed(1)}）`;
+        resDiv.appendChild(p);
+      });
+    }
+  </script>
+</body>
+</html>
